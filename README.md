@@ -12,7 +12,7 @@ Then open http://localhost:5173.
 
 ## Structure
 
-- `index.html` – page and sections
-- `styles.css` – design tokens and styles
-- `script.js` – starfield, scroll reveals, scroll-driven hero and work rail
-- `fonts/` – Sohne, Heldane, Berkeley
+- `index.html`: page and sections
+- `styles.css`: design tokens and styles
+- `script.js`: starfield, scroll reveals, scroll-driven hero and work rail
+- `fonts/`: Sohne, Heldane, Berkeley

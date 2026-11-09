@@ -77,10 +77,11 @@ section{padding:112px 0;scroll-margin-top:0}
 .fan:hover .card.front .card-in{border-color:var(--blue)}
 .fan:active .card.front .card-in{transform:perspective(900px) scale(.96)}
 .card .tag{font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding-bottom:8px;border-bottom:1px solid var(--g800);background:linear-gradient(90deg,var(--pink),var(--yellow),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
-.card .body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px}
-.card .body .serif{font-size:20px}
-.card .body .big{font-family:var(--serif-d);font-size:30px;color:var(--white);line-height:1.1}
-.card .body .dim{font-family:var(--serif-d);font-size:24px;color:var(--g300)}
+.card .body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:8px 0}
+.card .body .serif{font-size:18px}
+.card .body .big{font-family:var(--serif-d);font-size:25px;color:var(--white);line-height:1.2;text-wrap:balance}
+.card .body .stat-line{margin-top:6px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--blue)}
+.card .body .dim{font-family:var(--serif-d);font-size:20px;line-height:1.2;color:var(--g300);text-wrap:balance}
 .card .foot{border-top:1px solid var(--g800);padding-top:8px;text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--g700)}
 .card.flying{transition:none}
 .card.flying .card-in{animation:flyOut .32s var(--ease-in) forwards}
@@ -141,6 +142,8 @@ details p{color:var(--g400);margin-top:12px;max-width:720px}
 .contact .serif-d{color:var(--blue)}
 .mail{display:inline-block;margin-top:24px;font-family:var(--mono);font-size:14px;letter-spacing:.1em;color:var(--g400)}
 .mail:hover{color:var(--blue)}
+.contact-links{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-top:8px}
+.lead+.lead{margin-top:16px}
 
 /* footer */
 footer{border-top:1px solid var(--g800);padding:32px 0}
