@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Background samples</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="styles.css">
+<style>
+  body{overflow:hidden}
+  #stage{position:fixed;inset:0;z-index:0}
+  #stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .bar{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:20;display:flex;gap:4px;padding:4px;background:rgba(24,24,27,.9);border-radius:var(--r-md);max-width:calc(100vw - 32px);overflow-x:auto}
+  .bar button{all:unset;cursor:pointer;padding:8px 14px;border-radius:var(--r-md);font:500 14px var(--sans);color:var(--g300);white-space:nowrap;transition:background .15s,color .15s}
+  .bar button:hover{color:#fff}
+  .bar button[aria-pressed=true]{background:#fff;color:#000}
+  .bar button:focus-visible{outline:2px solid var(--blue)}
+  .demo{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(24px,8vw,160px);pointer-events:none}
+  .demo h1{max-width:900px}
+  .demo p{margin-top:24px}
+  .note{position:fixed;bottom:24px;left:0;right:0;z-index:20;text-align:center;font:400 11px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--g500);padding:0 16px}
+  .note b{color:var(--blue);font-weight:400}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div class="bar" role="group" aria-label="Background samples">
+  <button data-s="warp">1 · Warp flight</button>
+  <button data-s="galaxy">2 · Galaxy</button>
+  <button data-s="shapes">3 · Floating geometry</button>
+  <button data-s="nebula">4 · Ice nebula</button>
+</div>
+<div class="demo">
+  <h1>I turn digital strategy into <span class="serif-d">revenue.</span></h1>
+  <p class="lead">15+ years leading eCommerce, CRM and digital transformation across Latin America.</p>
+</div>
+<div class="note" id="note"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const stage = document.getElementById('stage'), note = document.getElementById('note');
+const mouse = { x: 0, y: 0 }; let wheel = 0;
+addEventListener('pointermove', e => { mouse.x = e.clientX / innerWidth * 2 - 1; mouse.y = -(e.clientY / innerHeight * 2 - 1); });
+addEventListener('wheel', e => { wheel += e.deltaY; }, { passive: true });
+const ICE = '#97edff';
+
+/* 1. Warp flight: 2D canvas, pseudo-3D */
+function warp(c) {
+  const x = c.getContext('2d'); let w, h, raf, speed = .012, tgt = .012; const S = [];
+  const size = () => { w = c.width = innerWidth; h = c.height = innerHeight; };
+  const mk = full => ({ x: (Math.random() - .5) * 3, y: (Math.random() - .5) * 3, z: full ? Math.random() : 1 });
+  size(); for (let i = 0; i < 700; i++) S.push(mk(true));
+  addEventListener('resize', size);
+  const loop = () => {
+    tgt = .012 + Math.min(.22, Math.abs(wheel) * .0006); wheel *= .92;
+    speed += (tgt - speed) * .06;
+    x.fillStyle = 'rgba(0,0,0,.28)'; x.fillRect(0, 0, w, h);
+    for (const s of S) {
+      const pz = s.z; s.z -= speed;
+      if (s.z < .02) { Object.assign(s, mk(false)); continue; }
+      const k = h * .5, cx = w / 2 + mouse.x * 120, cy = h / 2 - mouse.y * 80;
+      const x1 = cx + s.x / pz * k * .35, y1 = cy + s.y / pz * k * .35;
+      const x2 = cx + s.x / s.z * k * .35, y2 = cy + s.y / s.z * k * .35;
+      const a = 1 - s.z; x.strokeStyle = s.z < .35 ? `rgba(255,255,255,${a})` : `rgba(151,237,255,${a * .9})`;
+      x.lineWidth = Math.max(.4, a * 2.4); x.beginPath(); x.moveTo(x1, y1); x.lineTo(x2, y2); x.stroke();
+    }
+    raf = requestAnimationFrame(loop);
+  };
+  loop();
+  return () => { cancelAnimationFrame(raf); removeEventListener('resize', size); };
+}
+
+/* shared three setup */
+function threeBase(c, fov = 60) {
+  const r = new THREE.WebGLRenderer({ canvas: c, antialias: true });
+  r.setPixelRatio(Math.min(2, devicePixelRatio)); r.setClearColor(0x000000);
+  const cam = new THREE.PerspectiveCamera(fov, 1, .1, 400);
+  const size = () => { r.setSize(innerWidth, innerHeight, false); cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); };
+  size(); addEventListener('resize', size);
+  return { r, cam, size };
+}
+function dot() {
+  const k = document.createElement('canvas'); k.width = k.height = 64; const g = k.getContext('2d');
+  const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.25, 'rgba(255,255,255,.6)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(k);
+}
+
+/* 2. Galaxy: spiral of 30k additive particles, camera orbits with mouse, wheel zooms */
+function galaxy(c) {
+  const { r, cam, size } = threeBase(c); const scene = new THREE.Scene();
+  const N = 30000, pos = new Float32Array(N * 3), col = new Float32Array(N * 3);
+  const a = new THREE.Color('#ffffff'), b = new THREE.Color('#97edff'), d = new THREE.Color('#3a7f95');
+  for (let i = 0; i < N; i++) {
+    const rad = Math.pow(Math.random(), 1.5) * 14, br = (i % 4) / 4 * Math.PI * 2, ang = br + rad * .75;
+    const sc = () => Math.pow(Math.random(), 3) * (Math.random() < .5 ? 1 : -1) * .35 * rad * .5;
+    pos[i * 3] = Math.cos(ang) * rad + sc(); pos[i * 3 + 1] = sc() * .35; pos[i * 3 + 2] = Math.sin(ang) * rad + sc();
+    const t = rad / 14, cc = t < .35 ? a.clone().lerp(b, t / .35) : b.clone().lerp(d, (t - .35) / .65);
+    col.set([cc.r, cc.g, cc.b], i * 3);
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const pts = new THREE.Points(g, new THREE.PointsMaterial({ size: .16, map: dot(), vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  scene.add(pts);
+  let raf, dist = 16, t0 = performance.now();
+  const loop = () => {
+    const t = (performance.now() - t0) / 1000;
+    dist = Math.min(34, Math.max(6, dist + wheel * .004)); wheel *= .9;
+    pts.rotation.y = t * .05;
+    const ax = mouse.x * 1.1, ay = 5 + mouse.y * 4;
+    cam.position.x += (Math.sin(ax) * dist - cam.position.x) * .04; cam.position.z += (Math.cos(ax) * dist - cam.position.z) * .04; cam.position.y += (ay - cam.position.y) * .04;
+    cam.lookAt(0, 0, 0); r.render(scene, cam); raf = requestAnimationFrame(loop);
+  };
+  loop();
+  return () => { cancelAnimationFrame(raf); removeEventListener('resize', size); r.dispose(); };
+}
+
+/* 3. Floating geometry: wireframe solids drifting past in depth with fog */
+function shapes(c) {
+  const { r, cam, size } = threeBase(c, 70); const scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(0x000000, .035);
+  const geos = [new THREE.IcosahedronGeometry(1.4, 0), new THREE.OctahedronGeometry(1.5), new THREE.TorusGeometry(1.1, .35, 8, 18), new THREE.BoxGeometry(1.6, 1.6, 1.6)];
+  const lineMat = new THREE.LineBasicMaterial({ color: ICE, fog: true }), fill = new THREE.MeshBasicMaterial({ color: 0x050a0c, fog: true });
+  const items = [];
+  for (let i = 0; i < 46; i++) {
+    const g = geos[i % geos.length], m = new THREE.Mesh(g, fill); m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g), lineMat));
+    m.position.set((Math.random() - .5) * 46, (Math.random() - .5) * 26, -Math.random() * 110 + 10);
+    m.userData = { rx: (Math.random() - .5) * .01, ry: (Math.random() - .5) * .012, s: .6 + Math.random() * 1.4 }; m.scale.setScalar(m.userData.s);
+    scene.add(m); items.push(m);
+  }
+  const sp = new Float32Array(1500 * 3); for (let i = 0; i < sp.length; i += 3) { sp[i] = (Math.random() - .5) * 120; sp[i + 1] = (Math.random() - .5) * 70; sp[i + 2] = -Math.random() * 140; }
+  const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+  scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ size: .22, map: dot(), transparent: true, depthWrite: false, color: 0xffffff, blending: THREE.AdditiveBlending })));
+  let raf, speed = .035;
+  const loop = () => {
+    speed += (.035 + Math.min(.5, Math.abs(wheel) * .0012) - speed) * .06; wheel *= .92;
+    cam.position.z -= speed; cam.position.x += (mouse.x * 4 - cam.position.x) * .04; cam.position.y += (mouse.y * 2.5 - cam.position.y) * .04;
+    cam.rotation.z += (-mouse.x * .06 - cam.rotation.z) * .04;
+    for (const m of items) { m.rotation.x += m.userData.rx; m.rotation.y += m.userData.ry; if (m.position.z > cam.position.z + 8) { m.position.z -= 120; m.position.x = (Math.random() - .5) * 46; m.position.y = (Math.random() - .5) * 26; } }
+    r.render(scene, cam); raf = requestAnimationFrame(loop);
+  };
+  loop();
+  return () => { cancelAnimationFrame(raf); removeEventListener('resize', size); r.dispose(); };
+}
+
+/* 4. Ice nebula: full-screen fragment shader, domain-warped noise, mouse warps the flow */
+function nebula(c) {
+  const r = new THREE.WebGLRenderer({ canvas: c }); r.setPixelRatio(Math.min(1.5, devicePixelRatio));
+  const scene = new THREE.Scene(), cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const u = { t: { value: 0 }, m: { value: new THREE.Vector2() }, res: { value: new THREE.Vector2(1, 1) } };
+  const mat = new THREE.ShaderMaterial({ uniforms: u, vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position,1.);}', fragmentShader: `
+    precision highp float; varying vec2 vUv; uniform float t; uniform vec2 m; uniform vec2 res;
+    float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+    float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
+    float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<6;i++){v+=a*n(p);p=p*2.02+vec2(1.7,9.2);a*=.5;}return v;}
+    void main(){
+      vec2 uv=(vUv-.5)*vec2(res.x/res.y,1.); vec2 p=uv*2.2+m*.35;
+      vec2 q=vec2(fbm(p+t*.05),fbm(p+vec2(5.2,1.3)-t*.04));
+      vec2 r=vec2(fbm(p+3.*q+vec2(1.7,9.2)+t*.08),fbm(p+3.*q+vec2(8.3,2.8)-t*.06));
+      float f=fbm(p+3.*r);
+      vec3 ice=vec3(.592,.929,1.), deep=vec3(.533,.835,.902);
+      vec3 col=mix(vec3(0.),deep*.22,smoothstep(.25,.85,f));
+      col+=ice*pow(f,4.)*1.15*smoothstep(.3,1.,length(r));
+      col+=vec3(1.)*pow(f,9.)*.6;
+      vec2 sp=floor((uv+m*.015)*150.); float s=step(.9968,h(sp));
+      col+=s*(.45+.55*sin(t*2.+h(sp)*20.));
+      col*=1.-.55*dot(uv,uv)*.6;
+      gl_FragColor=vec4(col,1.);
+    }` });
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+  const size = () => { r.setSize(innerWidth, innerHeight, false); u.res.value.set(innerWidth, innerHeight); }; size(); addEventListener('resize', size);
+  let raf; const t0 = performance.now(), sm = new THREE.Vector2();
+  const loop = () => { u.t.value = (performance.now() - t0) / 1000 + wheel * .002; sm.x += (mouse.x - sm.x) * .04; sm.y += (mouse.y - sm.y) * .04; u.m.value.copy(sm); r.render(scene, cam); raf = requestAnimationFrame(loop); };
+  loop();
+  return () => { cancelAnimationFrame(raf); removeEventListener('resize', size); r.dispose(); };
+}
+
+const SAMPLES = {
+  warp: [warp, 'Flying through space. <b>Scroll/wheel</b> to hit warp speed, move the mouse to steer.'],
+  galaxy: [galaxy, 'A 30,000 particle spiral galaxy. <b>Move the mouse</b> to orbit, <b>wheel</b> to zoom.'],
+  shapes: [shapes, 'Wireframe shapes drifting past in fog. <b>Mouse</b> steers, <b>wheel</b> speeds up.'],
+  nebula: [nebula, 'A living nebula made by a shader. <b>Mouse</b> bends the flow, <b>wheel</b> fast-forwards it.']
+};
+let stop = null;
+function show(k) {
+  if (stop) stop(); stage.innerHTML = '';
+  const c = document.createElement('canvas'); stage.appendChild(c);
+  stop = SAMPLES[k][0](c); note.innerHTML = SAMPLES[k][1];
+  document.querySelectorAll('.bar button').forEach(b => b.setAttribute('aria-pressed', b.dataset.s === k));
+  history.replaceState(null, '', '#' + k);
+}
+document.querySelectorAll('.bar button').forEach(b => b.onclick = () => show(b.dataset.s));
+show(SAMPLES[location.hash.slice(1)] ? location.hash.slice(1) : 'galaxy');
+</script>
+</body>
+</html>
