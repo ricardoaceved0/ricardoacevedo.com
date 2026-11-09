@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ricardo Acevedo</title>
+<meta name="description" content="Ricardo Acevedo — building thoughtful software and design.">
+<link rel="canonical" href="https://ricardoacevedo.com/">
+<meta property="og:title" content="Ricardo Acevedo">
+<meta property="og:description" content="Building thoughtful software and design.">
+<meta property="og:url" content="https://ricardoacevedo.com/">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23000'/%3E%3Ctext x='32' y='44' font-size='36' font-family='sans-serif' font-weight='700' text-anchor='middle' fill='%2397edff'%3Era%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="fonts/Sohne-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<header>
+  <a href="#top" class="logo" aria-label="Ricardo Acevedo, home">ricardo</a>
+  <nav class="pill" aria-label="Primary">
+    <a href="#about" class="active">About</a>
+    <a href="#services">Services</a>
+    <a href="#work">Work</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <a href="#contact" class="btn btn-primary btn-start">✦ Start</a>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <div class="hero-track" id="heroTrack">
+  <section class="hero" id="hero">
+    <div class="wrap grid">
+      <div>
+        <div class="badges">
+          <span class="badge">Open for projects</span>
+          <span class="badge">Remote · Worldwide</span>
+        </div>
+        <h1>Imagine shipping what you actually meant to build</h1>
+        <p class="lead">Ideas are easy. Finishing is hard. <strong>I turn rough concepts into polished products</strong> — design, code and everything between — so you can focus on what only you can do.</p>
+        <div class="cta">
+          <a href="#work" class="btn btn-primary">See my work</a>
+          <a href="#services" class="btn btn-ghost">See services</a>
+        </div>
+        <a href="#about" class="scroll-cue" aria-label="Scroll down">↓</a>
+      </div>
+      <div class="fan" aria-hidden="true">
+        <div class="card dashed"></div>
+        <div class="card"></div>
+        <div class="card"></div>
+        <div class="card">
+          <span class="tag">Idea → Product</span>
+          <div class="body">
+            <span class="serif">transform</span>
+            <span class="dim">your rough sketch</span>
+            <span class="serif" style="margin-top:12px">into</span>
+            <span class="big">a launched site</span>
+          </div>
+          <span class="foot">by ricardo acevedo</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap about">
+      <div class="reveal">
+        <p class="eyebrow">About</p>
+        <h2>Hi, I'm <span class="serif-d">Ricardo</span>.</h2>
+      </div>
+      <div class="reveal">
+        <p class="lead">[Replace with your story.] I build websites and products with an eye for detail and a bias for shipping. I care about clear interfaces, fast pages and work that holds up long after launch.</p>
+        <div class="stats">
+          <div class="stat"><b>00+</b><span>Years building</span></div>
+          <div class="stat"><b>00</b><span>Projects shipped</span></div>
+          <div class="stat"><b>00</b><span>Happy clients</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="wrap">
+      <p class="eyebrow reveal">Services</p>
+      <h2 class="reveal">What I can <span class="serif-d">do for you</span></h2>
+      <div class="cards3">
+        <article class="svc reveal"><div><h3>Websites</h3><p>Fast, accessible, beautifully designed sites from landing pages to full applications.</p><span class="eyebrow">Design + Build</span></div></article>
+        <article class="svc reveal"><div><h3>Product design</h3><p>Turn fuzzy ideas into clear flows, prototypes and design systems your team can build on.</p><span class="eyebrow">UX + UI</span></div></article>
+        <article class="svc reveal"><div><h3>Upgrades &amp; rescue</h3><p>Migrations, performance fixes and cleanups for projects that have gotten away from you.</p><span class="eyebrow">Maintain</span></div></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <div class="work-track" id="workTrack">
+    <section id="work" class="work-pin">
+      <div class="wrap work-head">
+        <p class="eyebrow">Selected work</p>
+        <h2>Things I've <span class="serif-d">made</span></h2>
+      </div>
+      <div class="rail" id="rail">
+        <a href="#contact" class="frame"><div class="frame-in"><div class="frame-txt"><h3>Project One</h3><p>One-line description of the project and the result.</p><div class="chips"><span class="chip">Web</span><span class="chip">Design</span></div></div><span class="arrow">↗</span></div></a>
+        <a href="#contact" class="frame"><div class="frame-in"><div class="frame-txt"><h3>Project Two</h3><p>One-line description of the project and the result.</p><div class="chips"><span class="chip">App</span><span class="chip">Brand</span></div></div><span class="arrow">↗</span></div></a>
+        <a href="#contact" class="frame"><div class="frame-in"><div class="frame-txt"><h3>Project Three</h3><p>One-line description of the project and the result.</p><div class="chips"><span class="chip">Platform</span><span class="chip">Migration</span></div></div><span class="arrow">↗</span></div></a>
+        <a href="#contact" class="frame"><div class="frame-in"><div class="frame-txt"><h3>Project Four</h3><p>One-line description of the project and the result.</p><div class="chips"><span class="chip">Web</span><span class="chip">Motion</span></div></div><span class="arrow">↗</span></div></a>
+      </div>
+    </section>
+  </div>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap faq">
+      <p class="eyebrow reveal">FAQ</p>
+      <h2 class="reveal">Good <span class="serif-d">questions</span></h2>
+      <div class="reveal">
+        <details><summary>How do we get started?</summary><p>Send a short note about what you're building. I'll reply within a couple of days with questions and a rough plan.</p></details>
+        <details><summary>How long does a project take?</summary><p>Most sites ship in two to six weeks depending on scope. I'll give you a clear timeline up front.</p></details>
+        <details><summary>How do you price work?</summary><p>Fixed-price for well-defined projects, or a monthly retainer for ongoing work.</p></details>
+        <details><summary>Do you work with teams or only solo founders?</summary><p>Both. I'm comfortable embedding with an existing team or owning a project end to end.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <p class="eyebrow reveal">Contact</p>
+      <h2 class="reveal">Let's build <span class="serif-d">something</span></h2>
+      <p class="lead reveal">Have a project in mind? Tell me about it.</p>
+      <div class="reveal">
+        <a class="btn btn-primary btn-start" href="mailto:hello@ricardoacevedo.com">✦ Say hello</a><br>
+        <a class="mail" href="mailto:hello@ricardoacevedo.com">hello@ricardoacevedo.com</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Ricardo Acevedo</span>
+    <span><a href="#top">Back to top ↑</a></span>
+    <span>ricardoacevedo.com</span>
+  </div>
+</footer>
+<script>document.getElementById('yr').textContent=new Date().getFullYear()</script>
+<script src="script.js"></script>
+</body>
+</html>
