@@ -160,3 +160,27 @@ footer a:hover{color:var(--blue)}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
   .reveal{opacity:1;transform:none}
 }
+
+/* awards */
+.awards{padding:96px 0 64px}
+.awards-head{display:flex;align-items:center;gap:clamp(24px,5vw,72px);margin-bottom:40px;flex-wrap:wrap}
+.awards-head h2{margin:8px 0 16px}
+.awards-count{font-family:var(--serif-d);font-size:clamp(120px,18vw,240px);line-height:.8;letter-spacing:-.04em;background:var(--ice);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.08em}
+.medals{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.medal{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:28px;border:1px solid var(--g700);border-radius:var(--r-lg);background:linear-gradient(to bottom,var(--g900),var(--black));transition:border-color .25s var(--ease-out),transform .3s var(--ease-out)}
+.medal:hover{border-color:var(--blue);transform:translateY(-8px)}
+.medal-year{font-family:var(--serif-d);font-size:72px;line-height:1;background:var(--ice);-webkit-background-clip:text;background-clip:text;color:transparent}
+.medal-t{font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.medal-s{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--g500);margin-bottom:8px}
+.badge-ice{color:var(--black);background:var(--ice);border-color:transparent}
+
+/* certifications band */
+.cert{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;margin-top:16px;padding:28px;border:1px solid var(--g700);border-radius:var(--r-lg);background:linear-gradient(to bottom,var(--g900),var(--black));transition:border-color .25s var(--ease-out),transform .3s var(--ease-out)}
+.cert:hover{border-color:var(--blue);transform:translateY(-4px)}
+.cert h3{margin:8px 0}
+.cert p:not(.eyebrow){color:var(--g400);max-width:760px}
+.cert-link{font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+
+/* footer social */
+.social{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--g800);border-radius:var(--r-sm);color:var(--g500);transition:color .15s,border-color .15s,transform .2s var(--ease-out)}
+.social:hover{color:var(--blue);border-color:var(--blue);transform:translateY(-2px)}
